@@ -20,7 +20,6 @@ import {
   isField,
   isIdValue,
   isInlineFragment,
-  isProduction,
   resultKeyNameFromField,
   shouldInclude,
   storeKeyNameFromField,
@@ -200,29 +199,6 @@ export function writeSelectionSetToStore({
             field: selection,
             context,
           });
-        } else {
-          // if this is a defered field we don't need to throw / warn
-          const isDefered =
-            selection.directives &&
-            selection.directives.length &&
-            selection.directives.some(
-              directive => directive.name && directive.name.value === 'defer',
-            );
-
-          if (!isDefered && context.fragmentMatcherFunction) {
-            // XXX We'd like to throw an error, but for backwards compatibility's sake
-            // we just print a warning for the time being.
-            //throw new WriteError(`Missing field ${resultFieldKey} in ${JSON.stringify(result, null, 2).substring(0, 100)}`);
-            if (!isProduction()) {
-              console.warn(
-                `Missing field ${resultFieldKey} in ${JSON.stringify(
-                  result,
-                  null,
-                  2,
-                ).substring(0, 100)}`,
-              );
-            }
-          }
         }
       }
     } else {
@@ -259,9 +235,6 @@ export function writeSelectionSetToStore({
           fragment.typeCondition.name.value,
           fakeContext,
         );
-        if (!isProduction() && fakeContext.returnPartialData) {
-          console.error('WARNING: heuristic fragment matching going on!');
-        }
       }
 
       if (included && matches) {
