@@ -1,3 +1,4 @@
+** Custom build of apollo-cache-inmemory with errors silenced, for use only in tests **
 ---
 title: InMemoryCache
 description: An explanation of `apollo-cache-inmemory`
